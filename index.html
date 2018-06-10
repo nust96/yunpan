@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<!-- @author Haroen <hello@haroen.me> -->
+<html lang="en">
+
+<head>
+  <title>nebulas云盘搜索</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+  <link href='https://fonts.googleapis.com/css?family=Vidaloka' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/jquery-1.9.1.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/xcConfirm.js" type="text/javascript" charset="utf-8"></script>
+<link rel="stylesheet" type="text/css" href="css/xcConfirm.css"/>
+<script type="text/javascript" src="./dist/nebulas.js"></script>
+
+<script type="text/javascript" src="./dist/nebPay.js"></script>
+
+
+ 
+<script type="text/javascript">
+    var dappContactAddress = "n1jEQBjtSZs2LoTHQSLLi1J5o1jEd8d7cNA";
+    var nebulas = require("nebulas"), Account = Account, neb = new nebulas.Neb();
+    neb.setRequest(new nebulas.HttpRequest("https://mainnet.nebulas.io"));
+    var NebPay = require("nebpay");     //https://github.com/nebulasio/nebPay
+    var nebPay = new NebPay();
+    var serialNumber;
+    
+	  var from = dappContactAddress
+        var value = "0";
+        var nonce = "0"
+        var gas_price = "1000000"
+        var gas_limit = "2000000"
+        var callFunction = "getlength";
+        var callArgs = "[]";
+		var aaa;
+		var number=0;
+        console.log(callArgs);
+        var contract = {
+            "function": callFunction,
+            "args": callArgs
+        }
+    function get(){
+		console.log("111");
+		var callFunction = "getJoker";
+        
+		for(var i=0;i<5;i++){
+			console.log("222");
+			var callArgs = "[\""+i+"\"]";
+			var contract = {
+            "function": callFunction,
+            "args": callArgs
+			}
+			neb.api.call(from, dappContactAddress, value, nonce, gas_price, gas_limit, contract).then(function (resp) {
+            var result = resp.result;
+            
+      result = JSON.parse(result);
+			var contentstr = result.content;
+			if(contentstr.length>0 ){
+
+         var a= document.getElementById("list");
+        var b = document.createElement("blockquote");
+         b.innerHTML=contentstr;
+         a.appendChild(b);
+         holmes({
+        input: '.search input',
+        find: '.results blockquote',
+        placeholder: '',
+        class: {
+          visible: 'visible',
+          hidden: 'hidden'
+        }
+          });
+          
+			
+		
+			
+		  }
+        }).catch(function (err) {
+            console.log("error :" + err.message);
+
+        })
+
+		}
+
+
+
+	}
+	window.onload =get;
+
+
+
+
+    
+	$(function(){
+		
+	
+    
+    $("#btn6").click(function(){
+					var txt=  "格式:介绍@www.xxxx.com@密码：1111";
+					window.wxc.xcConfirm(txt, window.wxc.xcConfirm.typeEnum.input,{
+						onOk:function(v){
+              var to = dappContactAddress;
+              var callFunction = "save";
+              var value = "0";
+              var callArgs = "[\"" +v+ "\"]";
+              serialNumber = nebPay.call(to, value, callFunction, callArgs, {    //使用nebpay的call接口去调用合约,
+                listener: function (resp) {
+                    console.log("thecallback is " + resp)
+                    if(typeof resp == "string"){
+                    console.log("reject! cancel");
+                     alert("已取消上传")
+               
+                    }else{
+                      var a= document.getElementById("list");
+                       var b = document.createElement("blockquote");
+                      b.innerHTML=v;
+                      a.appendChild(b);
+                      alert("上传成功");
+                
+                
+            }
+                }
+            });
+
+
+            
+              
+							console.log(v);
+						}
+					});
+				});
+
+	});
+</script>
+</head>
+
+<body>
+  <header>
+    <h1>
+      <a href="#">canon</a>
+      <img src="images/holmes_logo-hover.svg" alt="Holmes Logo">
+    </h1>
+    <p>Fast and easy searching inside a page.</p>
+  </header>
+  <span class="separator" data-category="Cloud search"></span>
+ 
+
+    <pre><code class="microlight hidden" id="full-doc">
+holmes({
+  // queryselector for the input
+  input: '.search input',
+  // queryselector for element to search in
+  find: '.results article',
+  // (optional) text to show when no results
+  placeholder: 'no results',
+  class: {
+    // (optional) class to add to matched elements
+    visible: 'visible',
+    // (optional) class to add to non-matched elements
+    hidden: 'hidden'
+  },
+  // (optional) if true, this will refresh the content every search
+  dynamic: false,
+  // (optional) needs to be true if the input is a contenteditable field instead of a
+  contenteditable: false,
+  // (optional) in case you don't want to wait for DOMContentLoaded before starting Holmes:
+  instant: true
+});
+    </code></pre>
+ 
+  <span class="separator" data-category=""></span>
+  <p><a  id="btn6">@上传</a></p>
+  <div class="search">
+    <input type="search" placeholder="search here" required>
+    <button class="toggle" data-tooltip="Use of the .visible class">*</button>
+  </div>
+  <div class="results" id="list">
+   
+    <blockquote>
+      www.taobao.com
+      </blockquote>
+      <blockquote>
+        产品经理必看@https://pan.baidu.com/s/1an-d3Fbr69jYwj_ZcSQmoQ@密码: gnq1
+
+        </blockquote>
+        <blockquote>
+          小程序教程@https://pan.baidu.com/s/1F_WR-5QHOBIBLNvXKSoBCg@密码: 4ybc
+          </blockquote>
+          <blockquote>
+            www.baidu.com
+            </blockquote>
+            <blockquote>
+              www.360.com
+              </blockquote>
+     
+   
+  </div>
+  <span class="separator"></span>
+  
+  <script src="js/holmes.js"></script>
+  <script src="js/microlight.js"></script>
+  <script>
+  // holmes setup
+  holmes({
+        input: '.search input',
+        find: '.results blockquote',
+        placeholder: '',
+        class: {
+          visible: 'visible',
+          hidden: 'hidden'
+        }
+          });
+
+  // show all of the options
+  document.getElementById('more').addEventListener('click',function(e){
+    e.preventDefault();
+    document.getElementById('full-doc').classList.toggle('hidden');
+  });
+
+  // toggle for showing hidden elements
+  document.querySelector('.toggle').addEventListener('click', function(e) {
+    e.target.classList.toggle('clicked');
+    document.querySelector('.results').classList.toggle('classes');
+  });
+  </script>
+</body>
+
+</html>
